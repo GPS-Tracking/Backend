@@ -98,7 +98,6 @@ return function (App $app) {
                 "status" => "PDOException",
                 "message" => $e->getMessage()
             );
-            // Manually set the response as JSON
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -113,6 +112,25 @@ return function (App $app) {
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json')
                 ->withStatus(200);
+        } catch (PDOException $e) {
+            $data = array(
+                "status" => "PDOException",
+                "message" => $e->getMessage()
+            );
+            // Manually set the response as JSON
+            $response->getBody()->write(json_encode($data));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    });
+
+    $app->get('/status/noStatus', function (Request $request, Response $response) {
+        try {
+            $db = $this->get(PDO::class);
+            $sth = $db->prepare("SELECT COUNT(*) AS Jumlah_Device_noStatus FROM `map-tracking` WHERE Status IS NULL");
+            $sth->execute();
+            $data = $sth->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($data));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (PDOException $e) {
             $data = array(
                 "status" => "PDOException",
