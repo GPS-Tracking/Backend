@@ -141,4 +141,30 @@ return function (App $app) {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     });
+
+    $app->delete('/data/delete', function (Request $request, Response $response, $args) {
+        $nomor = $request->getQueryParams()['id'];
+        try {
+            $db = $this->get(PDO::class);
+            $sth = $db->prepare("DELETE FROM `map-tracking` WHERE id = :nomor");
+            $sth->bindParam(':nomor', $nomor);
+            $sth->execute();
+
+            // Respond with success message or appropriate data
+            $data = array(
+                "status" => "Success",
+                "message" => "Item deleted successfully"
+            );
+            $response->getBody()->write(json_encode($data));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (PDOException $e) {
+            $data = array(
+                "status" => "PDOException",
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($data));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    });
+      
 };
