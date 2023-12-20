@@ -166,5 +166,34 @@ return function (App $app) {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     });
+
+    $app->put('/data/updateStatus/{id}', function (Request $request, Response $response, $args) {
+        $id = $args['id'];
+        $data = $request->getParsedBody(); // Assuming you are sending the new status in the request body
+    
+        try {
+            $db = $this->get(PDO::class);
+            $sth = $db->prepare("UPDATE `map-tracking` SET Status = :status WHERE id = :id");
+            $sth->bindParam(':status', $data['status']); // Assuming you have a 'status' key in your request body
+            $sth->bindParam(':id', $id);
+            $sth->execute();
+    
+            // Respond with success message or appropriate data
+            $responseData = array(
+                "status" => "Success",
+                "message" => "Status updated successfully"
+            );
+            $response->getBody()->write(json_encode($responseData));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (PDOException $e) {
+            $responseData = array(
+                "status" => "PDOException",
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($responseData));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    });
+    
       
 };
