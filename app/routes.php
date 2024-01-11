@@ -195,5 +195,31 @@ return function (App $app) {
         }
     });
     
-      
+    $app->put('/data/updateCatatan/{id}', function (Request $request, Response $response, $args) {
+        $id = $args['id'];
+        $data = $request->getParsedBody();
+    
+        try {
+            $db = $this->get(PDO::class);
+            $sth = $db->prepare("UPDATE `map-tracking` SET Catatan = :catatan WHERE id = :id");
+            $sth->bindParam(':catatan', $data['catatan']);
+            $sth->bindParam(':id', $id);
+            $sth->execute();
+    
+            $responseData = array(
+                "status" => "Success",
+                "message" => "Catatan updated successfully"
+            );
+            $response->getBody()->write(json_encode($responseData));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (PDOException $e) {
+            $responseData = array(
+                "status" => "PDOException",
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($responseData));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    });
+    
 };
