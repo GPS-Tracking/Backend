@@ -221,5 +221,31 @@ return function (App $app) {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     });
+
+    // Add this route to your existing Slim routes
+    $app->get('/api/data/getFilteredData', function (Request $request, Response $response) {
+        try {
+            $db = $this->get(PDO::class);
+            $start = $request->getQueryParams()['start'];
+            $end = $request->getQueryParams()['end'];
+
+            $sth = $db->prepare("SELECT * FROM `map-tracking` WHERE DateColumn BETWEEN :start AND :end");
+            $sth->bindParam(':start', $start);
+            $sth->bindParam(':end', $end);
+            $sth->execute();
+
+            $data = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+            $response->getBody()->write(json_encode($data));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (PDOException $e) {
+            $data = array(
+                "status" => "PDOException",
+                "message" => $e->getMessage()
+            );
+            $response->getBody()->write(json_encode($data));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    });
     
 };
