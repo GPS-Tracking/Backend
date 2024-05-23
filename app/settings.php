@@ -12,7 +12,7 @@ return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
         SettingsInterface::class => function () {
             return new Settings([
-                'displayErrorDetails' => true, // Should be set to false in production
+                'displayErrorDetails' => true,
                 'logError'            => false,
                 'logErrorDetails'     => false,
                 'logger' => [
@@ -24,7 +24,7 @@ return function (ContainerBuilder $containerBuilder) {
                     'driver' => 'mysql',
                     'host' => 'localhost',
                     'username' => 'root',
-                    'database' => 'backend-kartanagari',
+                    'database' => 'instalasi-backend',
                     'password' => '',
                     'charset' => 'utf8mb4',
                     'collation' => 'utf8mb4_unicode_ci',

@@ -11,7 +11,6 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
-        // CORS Pre-Flight OPTIONS Request Handler
         return $response;
     });
 
@@ -38,7 +37,6 @@ return function (App $app) {
                 "status" => "PDOException",
                 "message" => $e->getMessage()
             );
-            // Manually set the response as JSON
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -58,7 +56,6 @@ return function (App $app) {
                 "status" => "PDOException",
                 "message" => $e->getMessage()
             );
-            // Manually set the response as JSON
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -78,7 +75,6 @@ return function (App $app) {
                 "status" => "PDOException",
                 "message" => $e->getMessage()
             );
-            // Manually set the response as JSON
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -117,7 +113,6 @@ return function (App $app) {
                 "status" => "PDOException",
                 "message" => $e->getMessage()
             );
-            // Manually set the response as JSON
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -136,7 +131,6 @@ return function (App $app) {
                 "status" => "PDOException",
                 "message" => $e->getMessage()
             );
-            // Manually set the response as JSON
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -169,16 +163,15 @@ return function (App $app) {
 
     $app->put('/data/updateStatus/{id}', function (Request $request, Response $response, $args) {
         $id = $args['id'];
-        $data = $request->getParsedBody(); // Assuming you are sending the new status in the request body
+        $data = $request->getParsedBody();
     
         try {
             $db = $this->get(PDO::class);
             $sth = $db->prepare("UPDATE `map-tracking` SET Status = :status WHERE id = :id");
-            $sth->bindParam(':status', $data['status']); // Assuming you have a 'status' key in your request body
+            $sth->bindParam(':status', $data['status']);
             $sth->bindParam(':id', $id);
             $sth->execute();
     
-            // Respond with success message or appropriate data
             $responseData = array(
                 "status" => "Success",
                 "message" => "Status updated successfully"
@@ -222,7 +215,6 @@ return function (App $app) {
         }
     });
 
-    // Add this route to your existing Slim routes
     $app->get('/api/data/getFilteredData', function (Request $request, Response $response) {
         try {
             $db = $this->get(PDO::class);
